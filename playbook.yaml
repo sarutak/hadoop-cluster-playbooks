@@ -1,0 +1,31 @@
+- hosts: all
+  tasks:
+    - name: Make dirs
+      become: yes
+      file: path=/hadoop/2.7.2/ recurse=yes state=directory owner=root group=hadoop mode=775
+
+    - name: Make hadoop.tmp.dir
+      become: yes
+      file: path=/hadoop/2.7.2/tmp state=directory state=directory owner=root group=hadoop mode=777
+
+    - name: Make dir for namenode daemon log
+      become: yes
+      file: path=/var/log/hadoop/2.7.2/ owner=root group=hadoop mode=775 state=directory
+
+    - name: Make daemon pid dir
+      become: yes
+      file: path=/var/run/hadoop/2.7.2 recurse=yes owner=root group=hadoop mode=775 state=directory
+
+    - name: Rsync hadoop conf files
+      become: yes
+      copy: src={{item}} dest=/opt/hadoop/current/etc/hadoop/
+      with_fileglob:
+        - /Users/kou/work/ansible/hadoop-2.7.2/conf/*
+
+    - name: Make dirs for HDFS
+      become: yes
+      file: path=/hadoop/2.7.2/hdfs owner=hdfs group=hadoop state=directory mode=775
+
+    - name: Make dirs for YARN
+      become: yes
+      file: path=/hadoop/2.7.2/yarn owner=yarn group=hadoop mode=775 state=directory
